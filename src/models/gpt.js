@@ -22,11 +22,6 @@ export class GPT {
     }
 
     async sendRequest(turns, systemMessage, stop_seq='***') {
-        let messages = strictFormat(turns);
-        messages = messages.map(message => {
-            message.content += stop_seq;
-            return message;
-        });
         let model = this.model_name || "gpt-5.4-mini";
 
         let res = null;
