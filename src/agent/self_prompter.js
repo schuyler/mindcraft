@@ -10,6 +10,7 @@ export class SelfPrompter {
         this.prompt = '';
         this.idle_time = 0;
         this.cooldown = 2000;
+        this.user_turns = 0;
     }
 
     start(prompt) {
@@ -58,6 +59,8 @@ export class SelfPrompter {
             console.warn('Self-prompt loop is already active. Ignoring request.');
             return;
         }
+        if (this.user_turns > 0)
+            return; // update() starts the loop once the player's turn ends
         console.log('starting self-prompt loop')
         this.loop_active = true;
         let no_command_count = 0;
@@ -66,6 +69,8 @@ export class SelfPrompter {
             const msg = `You are self-prompting with the goal: '${this.prompt}'. Your next response MUST contain a command with this syntax: !commandName. Respond:`;
             
             let used_command = await this.agent.handleMessage('system', msg, -1);
+            if (this.interrupt)
+                break;
             if (!used_command) {
                 no_command_count++;
                 if (no_command_count >= MAX_NO_COMMAND) {
@@ -88,7 +93,7 @@ export class SelfPrompter {
 
     update(delta) {
         // automatically restarts loop
-        if (this.state === ACTIVE && !this.loop_active && !this.interrupt) {
+        if (this.state === ACTIVE && !this.loop_active && this.user_turns === 0) {
             if (this.agent.isIdle())
                 this.idle_time += delta;
             else
@@ -105,42 +110,37 @@ export class SelfPrompter {
         }
     }
 
-    async stopLoop() {
-        // you can call this without await if you don't need to wait for it to finish
-        if (this.interrupt)
-            return;
-        console.log('stopping self-prompt loop')
-        this.interrupt = true;
-        while (this.loop_active) {
-            await new Promise(r => setTimeout(r, 500));
+    stopLoop() {
+        // the loop clears interrupt when it exits
+        if (this.loop_active) {
+            console.log('stopping self-prompt loop')
+            this.interrupt = true;
         }
-        this.interrupt = false;
     }
 
     async stop(stop_action=true) {
-        this.interrupt = true;
+        this.state = STOPPED;
+        this.stopLoop();
         if (stop_action)
             await this.agent.actions.stop();
-        this.stopLoop();
-        this.state = STOPPED;
     }
 
     async pause() {
-        this.interrupt = true;
-        await this.agent.actions.stop();
-        this.stopLoop();
         this.state = PAUSED;
+        this.stopLoop();
+        await this.agent.actions.stop();
     }
 
     shouldInterrupt(is_self_prompt) { // to be called from handleMessage
-        return is_self_prompt && (this.state === ACTIVE || this.state === PAUSED) && this.interrupt;
+        return is_self_prompt && this.interrupt;
     }
 
-    handleUserPromptedCmd(is_self_prompt, is_action) {
-        // if a user messages and the bot responds with an action, stop the self-prompt loop
-        if (!is_self_prompt && is_action) {
-            this.stopLoop();
-            // this stops it from responding from the handlemessage loop and the self-prompt loop at the same time
-        }
+    beginUserTurn() {
+        this.user_turns++;
+        this.stopLoop();
+    }
+
+    endUserTurn() {
+        this.user_turns--;
     }
 }

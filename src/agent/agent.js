@@ -4,7 +4,7 @@ import { VisionInterpreter } from './vision/vision_interpreter.js';
 import { Prompter } from '../models/prompter.js';
 import { initModes } from './modes.js';
 import { initBot } from '../utils/mcdata.js';
-import { containsCommand, commandExists, executeCommand, truncCommandMessage, isAction, blacklistCommands } from './commands/index.js';
+import { containsCommand, commandExists, executeCommand, truncCommandMessage, blacklistCommands } from './commands/index.js';
 import { ActionManager } from './action_manager.js';
 import { NPCContoller } from './npc/controller.js';
 import { MemoryBank } from './memory_bank.js';
@@ -252,6 +252,18 @@ export class Agent {
     }
 
     async handleMessage(source, message, max_responses=null) {
+        const from_player = source !== 'system' && source !== this.name && !convoManager.isOtherAgent(source);
+        if (!from_player)
+            return this._handleMessage(source, message, max_responses);
+        this.self_prompter.beginUserTurn();
+        try {
+            return await this._handleMessage(source, message, max_responses);
+        } finally {
+            this.self_prompter.endUserTurn();
+        }
+    }
+
+    async _handleMessage(source, message, max_responses) {
         await this.checkTaskDone();
         if (!source || !message) {
             console.warn('Received empty message from', source);
@@ -339,7 +351,6 @@ export class Agent {
                 }
 
                 if (checkInterrupt()) break;
-                this.self_prompter.handleUserPromptedCmd(self_prompt, isAction(command_name));
 
                 if (settings.show_command_syntax === "full") {
                     this.routeResponse(source, res);
