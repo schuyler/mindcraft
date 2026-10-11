@@ -10,10 +10,10 @@
 
 - **`npm install` fails with Python or C++ build errors**: This typically happens when building native modules like `gl`. Common solutions:
   - **Python not found** (macOS/Linux): If you see `python: command not found`, create a symlink: `sudo ln -s $(which python3) /usr/local/bin/python`
-  - **C++20 errors or Node version issues**: If you see `"C++20 or later required"` errors, you're likely using Node v24 or newer. The `gl` package requires Node LTS (v18 or v20). Switch versions using:
+  - **C++20 errors or Node version issues**: If you see `"C++20 or later required"` errors, you're likely using Node v24 or newer. Use Node v22 LTS. Switch versions using:
     ```bash
-    nvm install 20
-    nvm use 20
+    nvm install 22
+    nvm use 22
     rm -rf node_modules package-lock.json
     npm install
     ```
