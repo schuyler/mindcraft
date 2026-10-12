@@ -37,6 +37,14 @@ export function wordOverlapScore(text1, text2) {
     return intersection.length / (words1.length + words2.length - intersection.length);
 }
 
+// image turns carry content-part arrays; a string joins them as a text part of
+// the same type the array uses ('text', or 'input_text' for the responses API)
+function mergeContentParts(a, b) {
+    const textType = [a, b].flat().find(part => part.text !== undefined)?.type ?? 'text';
+    const toParts = content => typeof content === 'string' ? [{type: textType, text: content}] : content;
+    return [...toParts(a), ...toParts(b)];
+}
+
 // ensures stricter turn order and roles:
 // - system messages are treated as user messages and prefixed with SYSTEM:
 // - combines repeated messages from users
@@ -60,7 +68,11 @@ export function strictFormat(turns) {
         }
         else if (msg.role === prev_role) {
             // combine new message with previous message instead of adding a new one
-            messages[messages.length-1].content += '\n' + msg.content;
+            const prev = messages[messages.length-1];
+            if (typeof prev.content === 'string' && typeof msg.content === 'string')
+                prev.content += '\n' + msg.content;
+            else
+                prev.content = mergeContentParts(prev.content, msg.content);
         }
         else {
             messages.push(msg);
