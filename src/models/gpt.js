@@ -83,18 +83,13 @@ export class GPT {
     }
 
     async sendVisionRequest(messages, systemMessage, imageBuffer) {
-        const imageMessages = [...messages];
-        imageMessages.push({
-            role: "user",
-            content: [
-                { type: "input_text", text: systemMessage },
-                {
-                    type: "input_image",
-                    image_url: `data:image/jpeg;base64,${imageBuffer.toString('base64')}`
-                }
-            ]
-        });
-        
+        const imageUrl = `data:image/jpeg;base64,${imageBuffer.toString('base64')}`;
+        // a custom url goes through chat completions, which uses different part types than responses
+        const content = this.url
+            ? [{ type: "text", text: systemMessage }, { type: "image_url", image_url: { url: imageUrl } }]
+            : [{ type: "input_text", text: systemMessage }, { type: "input_image", image_url: imageUrl }];
+        const imageMessages = [...messages, { role: "user", content }];
+
         return this.sendRequest(imageMessages, systemMessage);
     }
 
