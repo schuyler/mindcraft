@@ -314,6 +314,8 @@ export class Agent {
 
         if (!self_prompt && this.self_prompter.isActive()) // message is from user during self-prompting
             max_responses = 1; // force only respond to this message, then let self-prompting take over
+        let last_command = null;
+        let last_output = null;
         for (let i=0; i<max_responses; i++) {
             if (checkInterrupt()) break;
             let history = this.history.getHistory();
@@ -368,6 +370,15 @@ export class Agent {
                     this.history.add('system', execute_res);
                 else
                     break;
+
+                // the model's prose varies between repeats, so compare only the command and its args
+                const command = res.substring(res.indexOf(command_name));
+                if (command === last_command && execute_res === last_output) {
+                    console.warn(`Agent repeated ${command} with the same result, ending command loop.`);
+                    break;
+                }
+                last_command = command;
+                last_output = execute_res;
             }
             else { // conversation response
                 this.history.add(this.name, res);
