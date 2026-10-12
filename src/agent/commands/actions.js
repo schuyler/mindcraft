@@ -257,7 +257,7 @@ export const actionsList = [
     },
     {
         name: '!collectBlocks',
-        description: 'Collect the nearest blocks of a given type.',
+        description: 'Break the nearest blocks of a given type (mining, digging, chopping, or by hand, with the best tool you have) and pick up the drops. Works on any block, natural or placed.',
         params: {
             'type': { type: 'BlockName', description: 'The block type to collect.' },
             'num': { type: 'int', description: 'The number of blocks to collect.', domain: [1, Number.MAX_SAFE_INTEGER] }
