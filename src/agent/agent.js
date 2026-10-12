@@ -4,7 +4,7 @@ import { VisionInterpreter } from './vision/vision_interpreter.js';
 import { Prompter } from '../models/prompter.js';
 import { initModes } from './modes.js';
 import { initBot } from '../utils/mcdata.js';
-import { containsCommand, commandExists, executeCommand, truncCommandMessage, isAction, blacklistCommands } from './commands/index.js';
+import { containsCommand, commandExists, executeCommand, truncCommandMessage, isAction, isReadOnly, blacklistCommands } from './commands/index.js';
 import { ActionManager } from './action_manager.js';
 import { NPCContoller } from './npc/controller.js';
 import { MemoryBank } from './memory_bank.js';
@@ -373,7 +373,7 @@ export class Agent {
 
                 // the model's prose varies between repeats, so compare only the command and its args
                 const command = res.substring(res.indexOf(command_name));
-                if (command === last_command && execute_res === last_output) {
+                if (isReadOnly(command_name) && command === last_command && execute_res === last_output) {
                     console.warn(`Agent repeated ${command} with the same result, ending command loop.`);
                     break;
                 }

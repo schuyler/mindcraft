@@ -185,6 +185,10 @@ export function isAction(name) {
     return actionsList.find(action => action.name === name) !== undefined;
 }
 
+export function isReadOnly(name) {
+    return !isAction(name) || getCommand(name).readOnly === true;
+}
+
 /**
  * @param {Object} command
  * @returns {Object[]} The command's parameters.
