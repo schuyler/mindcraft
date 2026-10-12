@@ -1,13 +1,15 @@
-diff --git a/node_modules/prismarine-viewer/viewer/lib/entity/Entity.js b/node_modules/prismarine-viewer/viewer/lib/entity/Entity.js
-index 8945452..dab25be 100644
---- a/node_modules/prismarine-viewer/viewer/lib/entity/Entity.js
-+++ b/node_modules/prismarine-viewer/viewer/lib/entity/Entity.js
-@@ -203,7 +203,7 @@ function getMesh (texture, jsonModel) {
- class Entity {
-   constructor (version, type, scene) {
-     const e = entities[type]
--    if (!e) throw new Error(`Unknown entity ${type}`)
-+    if (!e) return; //throw new Error(`Unknown entity ${type}`)
+diff --git a/node_modules/prismarine-viewer/viewer/lib/entities.js b/node_modules/prismarine-viewer/viewer/lib/entities.js
+index af3d14a..733cf3e 100644
+--- a/node_modules/prismarine-viewer/viewer/lib/entities.js
++++ b/node_modules/prismarine-viewer/viewer/lib/entities.js
+@@ -42,9 +42,7 @@ function getEntityMesh (entity, scene) {
+       }
  
-     this.mesh = new THREE.Object3D()
-     for (const [name, jsonModel] of Object.entries(e.geometry)) {
+       return e.mesh
+-    } catch (err) {
+-      console.log(err)
+-    }
++    } catch (err) {}
+   }
+ 
+   const geometry = new THREE.BoxGeometry(entity.width, entity.height, entity.width)

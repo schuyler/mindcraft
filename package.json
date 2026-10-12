@@ -28,7 +28,7 @@
         "open": "^10.2.0",
         "openai": "^4.4.0",
         "prismarine-item": "^1.15.0",
-        "prismarine-viewer": "^1.32.0",
+        "prismarine-viewer": "github:PrismarineJS/prismarine-viewer#dd818e00a1480d339042cd87c1f746b294c8ae82",
         "replicate": "^0.29.4",
         "ses": "^1.9.1",
         "socket.io": "^4.7.2",
