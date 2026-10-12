@@ -52,6 +52,7 @@ export const actionsList = [
     },
     {
         name: '!stop',
+        readOnly: true,
         description: 'Force stop all actions and commands that are currently executing.',
         perform: async function (agent) {
             await agent.actions.stop();
@@ -66,6 +67,7 @@ export const actionsList = [
     },
     {
         name: '!stfu',
+        readOnly: true,
         description: 'Stop all chatting and self prompting, but continue current action.',
         perform: async function (agent) {
             agent.openChat('Shutting up.');
@@ -232,6 +234,7 @@ export const actionsList = [
     },
     {
         name: '!viewChest',
+        readOnly: true,
         description: 'View the items/counts of the nearest chest.',
         params: { },
         perform: runAsAction(async (agent) => {
@@ -377,6 +380,7 @@ export const actionsList = [
     },
     {
         name: '!endGoal',
+        readOnly: true,
         description: 'Call when you have accomplished your goal. It will stop self-prompting and the current action. ',
         perform: async function (agent) {
             agent.self_prompter.stop();
@@ -385,6 +389,7 @@ export const actionsList = [
     },
     {
         name: '!showVillagerTrades',
+        readOnly: true,
         description: 'Show trades of a specified villager.',
         params: {'id': { type: 'int', description: 'The id number of the villager that you want to trade with.' }},
         perform: runAsAction(async (agent, id) => {
@@ -435,6 +440,7 @@ export const actionsList = [
     },
     {
         name: '!lookAtPlayer',
+        readOnly: true,
         description: 'Look at a player or look in the same direction as the player.',
         params: {
             'player_name': { type: 'string', description: 'Name of the target player' },
@@ -457,6 +463,7 @@ export const actionsList = [
     },
     {
         name: '!lookAtPosition',
+        readOnly: true,
         description: 'Look at specified coordinates.',
         params: {
             'x': { type: 'int', description: 'x coordinate' },
