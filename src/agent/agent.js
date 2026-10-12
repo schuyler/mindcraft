@@ -366,7 +366,8 @@ export class Agent {
 
                 if (execute_res)
                     this.history.add('system', execute_res);
-                else
+                // !stop stops all executing commands, and this loop is one of them
+                if (!execute_res || command_name === '!stop')
                     break;
             }
             else { // conversation response
