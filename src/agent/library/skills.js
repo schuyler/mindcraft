@@ -1180,12 +1180,12 @@ function startDoorInterval(bot) {
 
 export async function goToPosition(bot, x, y, z, min_distance=2) {
     /**
-     * Navigate to the given position.
+     * Navigate near the given position. Stops once within min_distance blocks of it (2 by default), so you end up beside it, not on it.
      * @param {MinecraftBot} bot, reference to the minecraft bot.
      * @param {number} x, the x coordinate to navigate to. If null, the bot's current x coordinate will be used.
      * @param {number} y, the y coordinate to navigate to. If null, the bot's current y coordinate will be used.
      * @param {number} z, the z coordinate to navigate to. If null, the bot's current z coordinate will be used.
-     * @param {number} distance, the distance to keep from the position. Defaults to 2.
+     * @param {number} min_distance, how close to get to the position. Defaults to 2.
      * @returns {Promise<boolean>} true if the position was reached, false otherwise.
      * @example
      * let position = world.world.getNearestBlock(bot, "oak_log", 64).position;
