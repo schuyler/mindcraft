@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import { makeCompartment, lockdown } from './library/lockdown.js';
 import * as skills from './library/skills.js';
 import * as world from './library/world.js';
-import { Vec3 } from 'vec3';
+import Vec3 from 'vec3';
 import {ESLint} from "eslint";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
