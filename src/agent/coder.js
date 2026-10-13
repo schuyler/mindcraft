@@ -70,7 +70,14 @@ export class Coder {
                 continue;
             }
             code = res.substring(res.indexOf('```')+3, res.lastIndexOf('```'));
-            const result = await this._stageCode(code);
+            let result;
+            try {
+                result = await this._stageCode(code);
+            } catch (e) {
+                console.warn('Code could not be parsed: ' + e.toString());
+                messages.push({ role: 'system', content: 'Error: Code could not be parsed:\n' + e.toString() + '\nPlease try again.' });
+                continue;
+            }
             const executionModule = result.func;
             const lintResult = await this._lintCode(result.src_lint_copy);
             if (lintResult) {
